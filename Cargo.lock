@@ -785,6 +785,7 @@ dependencies = [
  "enigo",
  "image",
  "imageproc",
+ "rayon",
  "scrap",
 ]
 

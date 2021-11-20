@@ -17,3 +17,9 @@ pub fn import_and_convert_array_img_to_grayscale(path: String) -> Array<u8> {
   let color_img: Array<u8> = arrayfire::load_image_native(path.to_string());
    rgb2gray(&color_img, 0.2126, 0.7152, 0.0722)
 }
+
+pub enum ScreenName {
+  Connect,
+  Game,
+  Heroes
+}

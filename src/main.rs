@@ -1,10 +1,11 @@
 use image::{self, RgbaImage};
 use enigo::{self, Enigo};
 use scrap::{self, Capturer, Display};
-use template::{util::*, cpu::*, gpu::*};
+use template::{cpu::*, gpu::*, util::{*, self}};
 use std::{error::Error, thread::{self}};
 use std::time::Duration;
 use std::io::ErrorKind::WouldBlock;
+
 
 fn main() -> Result<(), Box<dyn Error>> {
 
@@ -16,9 +17,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     let (w, h) = (capturer.width(), capturer.height());
 
     let check_rest = true;
-    let actual_page = "connect";
     let use_gpu = false;
     let mut mouse = Enigo::new();
+    let mut actual_screen = ScreenName::Connect;
 
     loop {
         thread::sleep(Duration::from_secs(2));
@@ -41,8 +42,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         normalized_rgba_image.save_with_format("tmp/output.jpg", image::ImageFormat::Jpeg).unwrap();
       
     match use_gpu {
-        false => {
-            process_on_gpu(check_rest, &mut mouse);
+        true => {
+            process_on_gpu(check_rest, &mut mouse, &mut actual_screen);
             break;
         },
         _  => {

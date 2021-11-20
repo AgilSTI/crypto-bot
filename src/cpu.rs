@@ -15,7 +15,7 @@ pub fn process_on_cpu(check_rest: bool, mouse: &mut Enigo) {
     let target_green_bar_img = image::open("images-target/green-bar.png").unwrap().to_luma8();
     
     let mut element_list: Vec<Element> = Vec::new();
-    let screenshot = image::open("tmp/output.png").expect("canno't open screenshot image");
+    let screenshot = image::open("tmp/output.jpg").expect("canno't open screenshot image");
     let gray_screenshot = screenshot.to_luma8();
 
     let gray_screenshot_for_connect_btn = gray_screenshot.clone();
