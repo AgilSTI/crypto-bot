@@ -13,7 +13,7 @@ use image::{Rgba, RgbaImage};
 }
     
 
-
+#[derive(Debug)]
 pub enum ScreenName {
   Connect,
   Game,

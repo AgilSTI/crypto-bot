@@ -1,3 +1,7 @@
+use enigo::{Enigo, MouseControllable};
+
+use crate::smooth_movement::smoothly_move_to;
+
 #[derive(Debug)]
 #[derive(Copy)]
 #[derive(Clone)]
@@ -19,6 +23,15 @@ impl Element {
             matching_probability,
             matching_probability_minimal,
         }
+    }
+
+    pub fn go_to_location(&self, mouse: &mut Enigo, mouse_speed: u64) {
+        smoothly_move_to(mouse, self.position_x, self.position_y, mouse_speed)
+    }
+
+    pub fn go_to_location_and_click(&self, mouse: &mut Enigo, x_compensation: i32, y_compesation: i32,  mouse_speed: u64) {
+        smoothly_move_to(mouse, self.position_x + x_compensation, self.position_y + y_compesation, mouse_speed);
+        mouse.mouse_click(enigo::MouseButton::Left);
     }
 
     pub fn to_owned(&self) -> &Element {

@@ -28,5 +28,4 @@ pub fn smoothly_move_to(mouse: &mut Enigo, x_pos: i32, y_pos: i32, movement_in_m
             
         }
     }
-    // mouse.mouse_click(MouseButton::Left)
 }

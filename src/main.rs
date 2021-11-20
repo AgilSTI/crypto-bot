@@ -16,20 +16,25 @@ fn main() -> Result<(), Box<dyn Error>> {
     //importing target element assets and covert to OpenCV elements
     let target_connect_img = imgcodecs::imread("images-target/connect.png", 0).expect("Couldn't find connect image");
     let metamask_connect_img = imgcodecs::imread("images-target/select-wallet-1-no-hover.png", 0).expect("Couldn't find connect image");
-    let metamask_blue_sign_img =  imgcodecs::imread("images-target/sign-btn.png", 0).expect("Couldn't find connect image");
-
+    let metamask_blue_sign_img =  imgcodecs::imread("images-target/select-wallet-2.png", 0).expect("Couldn't find connect image");
+    let hero_img = imgcodecs::imread("images-target/hero-icon.png", 0).expect("Couldn't find connect image");
+    let treasure_hunt_img = imgcodecs::imread("images-target/treasure-hunt-icon.png", 0).expect("Couldn't find treasure hunt image");
     
     let display = Display::primary().expect("Couldn't find primary display.");
     let mut capturer = Capturer::new(display).expect("Couldn't begin capture.");
     let (w, h) = (capturer.width(), capturer.height());
 
-    let check_rest = true;
+    let mut check_rest = true;
     let mut mouse = Enigo::new();
     let mut actual_screen = ScreenName::Connect;
+    thread::sleep(std::time::Duration::from_secs(3));
+
 
     loop {
         let buffer = match capturer.frame() {
-            Ok(buffer) => buffer,
+            Ok(buffer) => {
+                buffer
+            },
             Err(error) => {
                 if error.kind() == WouldBlock {
                     // Keep spinning.
@@ -48,15 +53,16 @@ fn main() -> Result<(), Box<dyn Error>> {
         let screenshot = imgcodecs::imread("tmp/output.png", 0).expect("Couldn't find connect image");
         
         matching_elements(
-            check_rest, 
+            &mut check_rest, 
             &mut mouse, 
-            &mut actual_screen, 
+            &mut actual_screen,
             screenshot.borrow(),
             target_connect_img.borrow(),
             metamask_connect_img.borrow(),
-            metamask_blue_sign_img.borrow()
+            hero_img.borrow(),
+            metamask_blue_sign_img.borrow(),
+            treasure_hunt_img.borrow(),
         );
-        break;
    }
 
    Ok(())

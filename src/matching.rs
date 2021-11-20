@@ -1,24 +1,24 @@
 use enigo::{Enigo};
-use rayon::iter::IntoParallelRefIterator;
-use crate::{element::Element, smooth_movement::smoothly_move_to, util::ScreenName};
+use crate::{element::Element, smooth_movement::smoothly_move_to, util::ScreenName, flow::*};
 use opencv::{imgproc, prelude::*};
 
 pub fn matching_elements(
-    check_rest: bool, 
+    check_rest: &mut bool, 
     mouse: &mut Enigo,
     actual_screen: &mut ScreenName,
     screenshot: &Mat,
     connect_img: &Mat,
     metamask_no_hover_img: &Mat,
     metamask_blue_sign_img: &Mat,
+    hero_img: &Mat,
+    treasure_hunt_img: &Mat
     ) {
-
 
        match actual_screen {
            ScreenName::Connect => {
             let connect_element =  match_element(screenshot, connect_img, 0.99);
             let metamask_element =  match_element(screenshot, metamask_no_hover_img, 0.99);
-            let metamask_blue_sign_element = match_element(screenshot, metamask_blue_sign_img, 0.99);
+            let metamask_blue_sign_element = match_element(screenshot, metamask_blue_sign_img, 0.97);
             let elements = vec![
                 connect_element,
                 metamask_element,
@@ -27,15 +27,27 @@ pub fn matching_elements(
 
             
             let matched_elements: Vec<&Element> = elements.iter().filter(|x| {
+                println!("{:?}", x);
                 x.matching_probability > x.matching_probability_minimal
             }).collect();
 
-            println!("{:?}", matched_elements);
 
+
+           connect_page_control_flow(mouse, actual_screen, matched_elements, &connect_element, &metamask_element, &metamask_blue_sign_element)
             // smoothly_move_to(mouse, connect_element.position_x, connect_element.position_y, 1);
            },
            _ => {
-
+            let hero_element =  match_element(screenshot, hero_img, 0.99);
+            let treasure_hunt_element =  match_element(screenshot, treasure_hunt_img, 0.99);
+            let elements = vec![
+                hero_element,
+                treasure_hunt_element,
+            ];
+            let matched_elements: Vec<&Element> = elements.iter().filter(|x| {
+                println!("{:?}", x);
+                x.matching_probability > x.matching_probability_minimal
+            }).collect();
+            game_page_control_flow(check_rest, mouse, actual_screen, matched_elements, &hero_element, &treasure_hunt_element);
            }
        }
      
