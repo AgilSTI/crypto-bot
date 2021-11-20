@@ -1,28 +1,33 @@
 use image::{self, RgbaImage};
 use enigo::{self, Enigo};
 use scrap::{self, Capturer, Display};
-use template::{cpu::*, gpu::*, util::{*, self}};
-use std::{error::Error, thread::{self}};
+use template::{matching::{self, matching_elements}, util::{*, self}};
+use std::{borrow::Borrow, error::Error, thread::{self}};
 use std::time::Duration;
 use std::io::ErrorKind::WouldBlock;
+use opencv::{imgcodecs, prelude::*};
 
 
 fn main() -> Result<(), Box<dyn Error>> {
 
     let one_second = Duration::new(1, 0);
     let one_frame = one_second / 60;
+
+    //importing target element assets and covert to OpenCV elements
+    let target_connect_img = imgcodecs::imread("images-target/connect.png", 0).expect("Couldn't find connect image");
+    let metamask_connect_img = imgcodecs::imread("images-target/select-wallet-1-no-hover.png", 0).expect("Couldn't find connect image");
+    let metamask_blue_sign_img =  imgcodecs::imread("images-target/sign-btn.png", 0).expect("Couldn't find connect image");
+
     
     let display = Display::primary().expect("Couldn't find primary display.");
     let mut capturer = Capturer::new(display).expect("Couldn't begin capture.");
     let (w, h) = (capturer.width(), capturer.height());
 
     let check_rest = true;
-    let use_gpu = false;
     let mut mouse = Enigo::new();
     let mut actual_screen = ScreenName::Connect;
 
     loop {
-        thread::sleep(Duration::from_secs(2));
         let buffer = match capturer.frame() {
             Ok(buffer) => buffer,
             Err(error) => {
@@ -39,18 +44,19 @@ fn main() -> Result<(), Box<dyn Error>> {
         let new_buff=  buffer.to_vec();
         let bgra_image = RgbaImage::from_vec(w as u32, h as u32, new_buff).unwrap();
         let normalized_rgba_image = convert_bgra_to_rgba(bgra_image);
-        normalized_rgba_image.save_with_format("tmp/output.jpg", image::ImageFormat::Jpeg).unwrap();
-      
-    match use_gpu {
-        true => {
-            process_on_gpu(check_rest, &mut mouse, &mut actual_screen);
-            break;
-        },
-        _  => {
-            process_on_cpu(check_rest, &mut mouse);
-        }
-    }
-
+        normalized_rgba_image.save_with_format("tmp/output.png", image::ImageFormat::Png).unwrap();
+        let screenshot = imgcodecs::imread("tmp/output.png", 0).expect("Couldn't find connect image");
+        
+        matching_elements(
+            check_rest, 
+            &mut mouse, 
+            &mut actual_screen, 
+            screenshot.borrow(),
+            target_connect_img.borrow(),
+            metamask_connect_img.borrow(),
+            metamask_blue_sign_img.borrow()
+        );
+        break;
    }
 
    Ok(())

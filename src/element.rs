@@ -3,15 +3,15 @@
 #[derive(Clone)]
 #[derive(PartialEq)]
 pub struct Element {
-  pub  id: u32,
-  pub  position_x: u32,
-  pub  position_y: u32,
+  pub  id: i32,
+  pub  position_x: i32,
+  pub  position_y: i32,
   pub  matching_probability: f32,
   pub  matching_probability_minimal: f32
 }
 
 impl Element {
-   pub fn new(id: u32, position_x: u32, position_y: u32, matching_probability: f32, matching_probability_minimal: f32) -> Element {
+   pub fn new(id: i32, position_x: i32, position_y: i32, matching_probability: f32, matching_probability_minimal: f32) -> Element {
         Element {
             id,
             position_x,
