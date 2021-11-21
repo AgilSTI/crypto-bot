@@ -11,7 +11,8 @@ pub fn matching_elements(
     metamask_no_hover_img: &Mat,
     metamask_blue_sign_img: &Mat,
     hero_img: &Mat,
-    treasure_hunt_img: &Mat
+    treasure_hunt_img: &Mat,
+    green_bar_img: &Mat,
     ) {
 
        match actual_screen {
@@ -27,7 +28,6 @@ pub fn matching_elements(
 
             
             let matched_elements: Vec<&Element> = elements.iter().filter(|x| {
-                println!("{:?}", x);
                 x.matching_probability > x.matching_probability_minimal
             }).collect();
 
@@ -37,17 +37,23 @@ pub fn matching_elements(
             // smoothly_move_to(mouse, connect_element.position_x, connect_element.position_y, 1);
            },
            _ => {
+            println!("********************");
             let hero_element =  match_element(screenshot, hero_img, 0.99);
+            println!("hero element {:?}", hero_element);
             let treasure_hunt_element =  match_element(screenshot, treasure_hunt_img, 0.99);
+            println!("treasure hunt element {:?}", hero_element);
+            let green_bar_element = match_element(screenshot, green_bar_img, 0.99);
+            println!("green_bar_element {:?}", green_bar_element);
+            println!("********************");
             let elements = vec![
                 hero_element,
                 treasure_hunt_element,
+                green_bar_element,
             ];
             let matched_elements: Vec<&Element> = elements.iter().filter(|x| {
-                println!("{:?}", x);
                 x.matching_probability > x.matching_probability_minimal
             }).collect();
-            game_page_control_flow(check_rest, mouse, actual_screen, matched_elements, &hero_element, &treasure_hunt_element);
+            game_page_control_flow(check_rest, mouse, actual_screen, matched_elements, &hero_element, &treasure_hunt_element, &green_bar_element);
            }
        }
      
@@ -74,3 +80,29 @@ fn match_element(screenshot: &Mat, template: &Mat, threshold: f32) -> Element {
     Element::new(1, px_max , py_max, max_value, threshold)
     
 }
+
+pub fn match_multiples_elements(screenshot: &Mat, template: &Mat, threshold: f32) -> Vec<Element> {
+    let mut match_result = Mat::default();
+    imgproc::match_template(&screenshot, &template, &mut match_result, 3, &Mat::default()).expect("error at match multiples items");
+    let match_result_buffer: Vec<Vec<f32>> = match_result.to_vec_2d().expect("Error at creating multiple matching result buffer");
+    let elements: Vec<Element> = match_result_buffer.iter().flatten().enumerate().filter( |x | {
+        *x.1 > 0.99
+    }).map( |y | {
+        let px_max = y.0 as i32 % match_result.mat_size()[1];
+        let py_max = y.0 as i32 / match_result.mat_size()[1];
+        println!("{:?}", Element::new(1, px_max, py_max, *y.1, threshold));
+        Element::new(1, px_max, py_max, *y.1, threshold)
+    }).collect();
+
+    let mut normalized_elements: Vec<Element> = Vec::new();
+
+    for x in 0..elements.len() {
+        if x < elements.len() - 1 && elements[x+1].position_y - elements[x].position_y < 5 {
+            normalized_elements.push(elements[x]);
+            println!("{}", x);
+        }
+        println!("{}", x);
+    }
+    normalized_elements
+}
+

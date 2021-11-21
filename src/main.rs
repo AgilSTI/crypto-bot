@@ -19,7 +19,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     let metamask_blue_sign_img =  imgcodecs::imread("images-target/select-wallet-2.png", 0).expect("Couldn't find connect image");
     let hero_img = imgcodecs::imread("images-target/hero-icon.png", 0).expect("Couldn't find connect image");
     let treasure_hunt_img = imgcodecs::imread("images-target/treasure-hunt-icon.png", 0).expect("Couldn't find treasure hunt image");
-    
+    let green_bar_img = imgcodecs::imread("images-target/green-bar.png", 0).expect("Couldn't find green bar image");
+
     let display = Display::primary().expect("Couldn't find primary display.");
     let mut capturer = Capturer::new(display).expect("Couldn't begin capture.");
     let (w, h) = (capturer.width(), capturer.height());
@@ -59,9 +60,10 @@ fn main() -> Result<(), Box<dyn Error>> {
             screenshot.borrow(),
             target_connect_img.borrow(),
             metamask_connect_img.borrow(),
-            hero_img.borrow(),
             metamask_blue_sign_img.borrow(),
+            hero_img.borrow(),
             treasure_hunt_img.borrow(),
+            &green_bar_img.borrow(),
         );
    }
 
