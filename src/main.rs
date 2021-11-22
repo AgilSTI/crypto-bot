@@ -21,6 +21,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     let treasure_hunt_img = imgcodecs::imread("images-target/treasure-hunt-icon.png", 0).expect("Couldn't find treasure hunt image");
     let green_bar_img = imgcodecs::imread("images-target/green-bar.png", 0).expect("Couldn't find green bar image");
     let close_heroes_screen_img = imgcodecs::imread("images-target/x.png", 0).expect("Couldn't find green bar image");
+    let go_back_arrow_img = imgcodecs::imread("images-target/go-back-arrow.png", 0).expect("Couldn't find green bar image");
+    let common_img = imgcodecs::imread("images-target/common-text.png", 0).expect("Couldn't find green bar image");
 
     let display = Display::primary().expect("Couldn't find primary display.");
     let mut capturer = Capturer::new(display).expect("Couldn't begin capture.");
@@ -72,6 +74,8 @@ fn main() -> Result<(), Box<dyn Error>> {
             treasure_hunt_img.borrow(),
             &green_bar_img.borrow(),
             close_heroes_screen_img.borrow(),
+            go_back_arrow_img.borrow(),
+            common_img.borrow(),
         );
    }
 

@@ -17,6 +17,8 @@ pub fn matching_elements(
     treasure_hunt_img: &Mat,
     green_bar_img: &Mat,
     close_heroes_screen_img: &Mat,
+    go_back_arrow_img: &Mat,
+    common_text_img: &Mat,
     ) {
 
        match actual_screen {
@@ -24,6 +26,7 @@ pub fn matching_elements(
             let connect_element =  match_element(screenshot, connect_img, 0.99);
             let metamask_element =  match_element(screenshot, metamask_no_hover_img, 0.99);
             let metamask_blue_sign_element = match_element(screenshot, metamask_blue_sign_img, 0.97);
+           
             let elements = vec![
                 connect_element,
                 metamask_element,
@@ -38,7 +41,6 @@ pub fn matching_elements(
 
 
            connect_page_control_flow(mouse, actual_screen, matched_elements, &connect_element, &metamask_element, &metamask_blue_sign_element)
-            // smoothly_move_to(mouse, connect_element.position_x, connect_element.position_y, 1);
            },
            _ => {
             println!("********************");
@@ -46,11 +48,15 @@ pub fn matching_elements(
             let treasure_hunt_element =  match_element(screenshot, treasure_hunt_img, 0.99);
             let green_bar_element = match_element(screenshot, green_bar_img, 0.99);
             let close_heroes_screen_element = match_element(screenshot, close_heroes_screen_img, 0.99);
+            let go_back_arrow_element = match_element(screenshot, go_back_arrow_img, 0.99);
+            let common_text_element = match_element(screenshot, common_text_img, 0.99);
             let elements = vec![
                 hero_element,
                 treasure_hunt_element,
                 green_bar_element,
                 close_heroes_screen_element,
+                go_back_arrow_element,
+                common_text_element,
             ];
             let matched_elements: Vec<&Element> = elements.iter().filter(|x| {
                 x.matching_probability > x.matching_probability_minimal
@@ -66,7 +72,9 @@ pub fn matching_elements(
                 &hero_element, 
                 &treasure_hunt_element, 
                 &green_bar_element, 
-                &close_heroes_screen_element
+                &close_heroes_screen_element,
+                &go_back_arrow_element,
+                &common_text_element
             );
            }
        }

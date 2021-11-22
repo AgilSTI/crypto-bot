@@ -39,7 +39,6 @@ impl Element {
         mouse.mouse_down(enigo::MouseButton::Left);
         for x in 0..y_movement {
             std::thread::sleep(std::time::Duration::from_millis(50));
-            println!("{}", x);
             mouse.mouse_move_relative(0, -x);
         }
 

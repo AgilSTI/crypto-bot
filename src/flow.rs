@@ -40,21 +40,23 @@ pub fn game_page_control_flow(
     treasure_hunt_element: &Element,
     green_bar_element: &Element,
     close_heroes_screen_element: &Element,
+    go_back_arrow_element: &Element,
+    common_text_element: &Element,
 ) {
 
     if matched_elements.contains(&hero_element) && matched_elements.contains(&treasure_hunt_element) {
         // inside game menu
         if *check_rest {
         hero_element.go_to_location_and_click(mouse, 32, 32, 1);
+        std::thread::sleep(std::time::Duration::from_secs(3));
         } else {
         treasure_hunt_element.go_to_location_and_click(mouse, 100, 100, 1);
+        std::thread::sleep(std::time::Duration::from_secs(5));
      }
 
-    }  else if matched_elements.contains(&green_bar_element) && *check_rest {
+    }  else if matched_elements.contains(&common_text_element) && *check_rest {
         // inside hero screen
         
-
-            
             let green_bar_img = imgcodecs::imread("images-target/green-bar.png", 0).expect("Couldn't find green bar image");
             let go_work_img = imgcodecs::imread("images-target/go-work.png", 0).expect("Couldn't find green bar image");
             let common_img = imgcodecs::imread("images-target/common-text.png", 0).expect("Couldn't find connect image");
@@ -77,20 +79,26 @@ pub fn game_page_control_flow(
                     able_to_work_heroes[0].go_to_location_and_click(mouse, 20, 20, 1);
                  } else if able_to_work_heroes.len() == 1{
                     able_to_work_heroes[0].go_to_location_and_click(mouse, 20, 20, 1);
+                    println!("green_btn {:?}", able_to_work_heroes[0]);
                     std::thread::sleep(std::time::Duration::from_secs(2));
                     able_to_work_heroes[0].slide_down(mouse, 100);
+
                  } else if *scann_attempt < 3 {
                     let last_common = common_text_element.last().unwrap();
-                    last_common.go_to_location_and_click(mouse, 0, 0, 1);
+                    last_common.slide_down(mouse, 140);
                     *scann_attempt += 1;
                  } else {
                     close_heroes_screen_element.go_to_location_and_click(mouse, 0, 0, 1);
                     *check_rest = false;
                  }
 
-                
-
+    
     std::thread::sleep(std::time::Duration::from_secs(5));
+    } else if matched_elements.contains(&go_back_arrow_element) {
+        *scann_attempt = 0;
+        *check_rest = true;
+        std::thread::sleep(std::time::Duration::from_secs(5));
+        go_back_arrow_element.go_to_location_and_click(mouse, 32, 23, 1);
     } else {
     *screen = ScreenName::Connect;
   }
