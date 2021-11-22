@@ -1,8 +1,4 @@
-use std::{thread, time::Duration};
-
 use image::{Rgba, RgbaImage};
-use scrap::{Capturer, Display, Frame};
-use std::io::ErrorKind::WouldBlock;
 
   pub fn convert_bgra_to_rgba(bgra_image: RgbaImage) -> RgbaImage {
     let mut new_rgba_image = RgbaImage::new(bgra_image.width(), bgra_image.height());

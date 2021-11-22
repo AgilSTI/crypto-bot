@@ -1,5 +1,5 @@
 use enigo::{Enigo};
-use crate::{element::Element, smooth_movement::smoothly_move_to, util::ScreenName, flow::*};
+use crate::{config::Config, element::Element, flow::*, smooth_movement::smoothly_move_to, util::ScreenName};
 use opencv::{imgproc, prelude::*};
 
 pub fn matching_elements(
@@ -9,6 +9,7 @@ pub fn matching_elements(
     total_heroes: i32,
     sent_to_work: &mut i32,
     scan_attempt: &mut i32,
+    config: &Config,
     screenshot: &Mat,
     connect_img: &Mat,
     metamask_no_hover_img: &Mat,
@@ -19,6 +20,7 @@ pub fn matching_elements(
     close_heroes_screen_img: &Mat,
     go_back_arrow_img: &Mat,
     common_text_img: &Mat,
+    new_map_img: &Mat,
     ) {
 
        match actual_screen {
@@ -40,7 +42,7 @@ pub fn matching_elements(
 
 
 
-           connect_page_control_flow(mouse, actual_screen, matched_elements, &connect_element, &metamask_element, &metamask_blue_sign_element)
+           connect_page_control_flow(mouse, actual_screen, matched_elements, &connect_element, &metamask_element, &metamask_blue_sign_element, config)
            },
            _ => {
             println!("********************");
@@ -50,6 +52,7 @@ pub fn matching_elements(
             let close_heroes_screen_element = match_element(screenshot, close_heroes_screen_img, 0.99);
             let go_back_arrow_element = match_element(screenshot, go_back_arrow_img, 0.99);
             let common_text_element = match_element(screenshot, common_text_img, 0.99);
+            let new_map_element =  match_element(screenshot, new_map_img, 0.99);
             let elements = vec![
                 hero_element,
                 treasure_hunt_element,
@@ -57,6 +60,7 @@ pub fn matching_elements(
                 close_heroes_screen_element,
                 go_back_arrow_element,
                 common_text_element,
+                new_map_element,
             ];
             let matched_elements: Vec<&Element> = elements.iter().filter(|x| {
                 x.matching_probability > x.matching_probability_minimal
@@ -74,7 +78,9 @@ pub fn matching_elements(
                 &green_bar_element, 
                 &close_heroes_screen_element,
                 &go_back_arrow_element,
-                &common_text_element
+                &common_text_element,
+                &new_map_element,
+                config
             );
            }
        }

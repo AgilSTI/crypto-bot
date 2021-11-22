@@ -1,4 +1,4 @@
-use crate::{element::Element, matching::match_multiples_elements, util::ScreenName};
+use crate::{config::Config, element::Element, matching::match_multiples_elements, util::ScreenName};
 use enigo::*;
 use opencv::{imgcodecs};
 
@@ -9,20 +9,20 @@ pub fn connect_page_control_flow(
     connect_element: &Element,
     metamask_element: &Element,
     metamask_blue_sign_element: &Element,
+    config: &Config,
 ) {
 
     if matched_elements.contains(&metamask_blue_sign_element) {
         metamask_blue_sign_element.go_to_location_and_click(mouse, 80, 40, 1);
-        std::thread::sleep(std::time::Duration::from_secs(10))
+        std::thread::sleep(std::time::Duration::from_secs(config.after_click_metamask_sign_blue_btn_delay))
     } else if matched_elements.contains(&metamask_element) {
         metamask_element.go_to_location_and_click(mouse, 60, 25, 1);
-        std::thread::sleep(std::time::Duration::from_secs(20))
+        std::thread::sleep(std::time::Duration::from_secs(config.after_click_metamask_connect_delay))
     } else if matched_elements.len() == 1 && matched_elements.contains(&connect_element) {
         connect_element.go_to_location_and_click(mouse, 100, 20, 1);
-        std::thread::sleep(std::time::Duration::from_secs(2))
+        std::thread::sleep(std::time::Duration::from_secs(config.after_click_connect_orange_btn_delay))
     } else {
         println!("Achou nada, procurando elementos do game");
-
         *screen = ScreenName::Game;
     }
     
@@ -42,16 +42,18 @@ pub fn game_page_control_flow(
     close_heroes_screen_element: &Element,
     go_back_arrow_element: &Element,
     common_text_element: &Element,
+    new_map_element: &Element,
+    config: &Config,
 ) {
 
     if matched_elements.contains(&hero_element) && matched_elements.contains(&treasure_hunt_element) {
         // inside game menu
         if *check_rest {
         hero_element.go_to_location_and_click(mouse, 32, 32, 1);
-        std::thread::sleep(std::time::Duration::from_secs(3));
+        std::thread::sleep(std::time::Duration::from_secs(config.treasure_hunt_first_action_delay));
         } else {
         treasure_hunt_element.go_to_location_and_click(mouse, 100, 100, 1);
-        std::thread::sleep(std::time::Duration::from_secs(5));
+        std::thread::sleep(std::time::Duration::from_secs(config.treasure_hunt_first_action_delay));
      }
 
     }  else if matched_elements.contains(&common_text_element) && *check_rest {
@@ -77,10 +79,10 @@ pub fn game_page_control_flow(
     
                  if able_to_work_heroes.len() > 1 {
                     able_to_work_heroes[0].go_to_location_and_click(mouse, 20, 20, 1);
+                    std::thread::sleep(std::time::Duration::from_secs(config.after_sent_to_work_delay));
                  } else if able_to_work_heroes.len() == 1{
                     able_to_work_heroes[0].go_to_location_and_click(mouse, 20, 20, 1);
-                    println!("green_btn {:?}", able_to_work_heroes[0]);
-                    std::thread::sleep(std::time::Duration::from_secs(2));
+                    std::thread::sleep(std::time::Duration::from_secs(config.after_sent_to_work_delay));
                     able_to_work_heroes[0].slide_down(mouse, 100);
 
                  } else if *scann_attempt < 3 {
@@ -92,12 +94,10 @@ pub fn game_page_control_flow(
                     *check_rest = false;
                  }
 
-    
-    std::thread::sleep(std::time::Duration::from_secs(5));
     } else if matched_elements.contains(&go_back_arrow_element) {
         *scann_attempt = 0;
         *check_rest = true;
-        std::thread::sleep(std::time::Duration::from_secs(5));
+        std::thread::sleep(std::time::Duration::from_secs(config.check_for_heroes_able_to_work_delay));
         go_back_arrow_element.go_to_location_and_click(mouse, 32, 23, 1);
     } else {
     *screen = ScreenName::Connect;

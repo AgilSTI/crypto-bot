@@ -1,17 +1,19 @@
 use image::{self, RgbaImage};
 use enigo::{self, Enigo};
 use scrap::{self, Capturer, Display};
-use template::{matching::{self, matching_elements}, util::{*, self}};
+use template::{config::Config, matching::{matching_elements}, util::{*}};
 use std::{borrow::Borrow, error::Error, thread::{self}};
 use std::time::Duration;
 use std::io::ErrorKind::WouldBlock;
-use opencv::{imgcodecs, prelude::*};
+use opencv::{imgcodecs};
 
 
 fn main() -> Result<(), Box<dyn Error>> {
 
-    let one_second = Duration::new(1, 0);
-    let one_frame = one_second / 60;
+    let arguments: Vec<String> = std::env::args().collect();
+    let config = Config::from_args(arguments);
+
+    println!("{:?}", config);
 
     //importing target element assets and covert to OpenCV elements
     let target_connect_img = imgcodecs::imread("images-target/connect.png", 0).expect("Couldn't find connect image");
@@ -23,6 +25,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let close_heroes_screen_img = imgcodecs::imread("images-target/x.png", 0).expect("Couldn't find green bar image");
     let go_back_arrow_img = imgcodecs::imread("images-target/go-back-arrow.png", 0).expect("Couldn't find green bar image");
     let common_img = imgcodecs::imread("images-target/common-text.png", 0).expect("Couldn't find green bar image");
+    let new_map_img =  imgcodecs::imread("images-target/new-map.png", 0).expect("Couldn't find green bar image");
 
     let display = Display::primary().expect("Couldn't find primary display.");
     let mut capturer = Capturer::new(display).expect("Couldn't begin capture.");
@@ -34,9 +37,10 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut sent_to_work = 0;
     let mut scanned_heroes = 0;
     let mut actual_screen = ScreenName::Connect;
-    thread::sleep(std::time::Duration::from_secs(3));
+    thread::sleep(std::time::Duration::from_secs(config.start_delay));
 
-
+    let one_second = Duration::new(1, 0);
+    let one_frame = one_second / 60;
     loop {
         let buffer = match capturer.frame() {
             Ok(buffer) => {
@@ -66,6 +70,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             total_heroes,
             &mut sent_to_work,
             &mut scanned_heroes,
+            config.borrow(),
             screenshot.borrow(),
             target_connect_img.borrow(),
             metamask_connect_img.borrow(),
@@ -76,6 +81,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             close_heroes_screen_img.borrow(),
             go_back_arrow_img.borrow(),
             common_img.borrow(),
+            new_map_img.borrow(),
         );
    }
 
