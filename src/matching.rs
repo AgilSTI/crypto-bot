@@ -7,6 +7,8 @@ pub fn matching_elements(
     mouse: &mut Enigo,
     actual_screen: &mut ScreenName,
     total_heroes: i32,
+    sent_to_work: &mut i32,
+    scan_attempt: &mut i32,
     screenshot: &Mat,
     connect_img: &Mat,
     metamask_no_hover_img: &Mat,
@@ -14,6 +16,7 @@ pub fn matching_elements(
     hero_img: &Mat,
     treasure_hunt_img: &Mat,
     green_bar_img: &Mat,
+    close_heroes_screen_img: &Mat,
     ) {
 
        match actual_screen {
@@ -40,21 +43,31 @@ pub fn matching_elements(
            _ => {
             println!("********************");
             let hero_element =  match_element(screenshot, hero_img, 0.99);
-            println!("hero element {:?}", hero_element);
             let treasure_hunt_element =  match_element(screenshot, treasure_hunt_img, 0.99);
-            println!("treasure hunt element {:?}", hero_element);
             let green_bar_element = match_element(screenshot, green_bar_img, 0.99);
-            println!("green_bar_element {:?}", green_bar_element);
-            println!("********************");
+            let close_heroes_screen_element = match_element(screenshot, close_heroes_screen_img, 0.99);
             let elements = vec![
                 hero_element,
                 treasure_hunt_element,
                 green_bar_element,
+                close_heroes_screen_element,
             ];
             let matched_elements: Vec<&Element> = elements.iter().filter(|x| {
                 x.matching_probability > x.matching_probability_minimal
             }).collect();
-            game_page_control_flow(check_rest, mouse, actual_screen, total_heroes, matched_elements, &hero_element, &treasure_hunt_element, &green_bar_element);
+            game_page_control_flow(
+                check_rest, 
+                mouse, 
+                actual_screen, 
+                total_heroes, 
+                sent_to_work,
+                scan_attempt,
+                matched_elements, 
+                &hero_element, 
+                &treasure_hunt_element, 
+                &green_bar_element, 
+                &close_heroes_screen_element
+            );
            }
        }
      
@@ -91,7 +104,6 @@ pub fn match_multiples_elements(screenshot: &Mat, template: &Mat, threshold: f32
     }).map( |y | {
         let px_max = y.0 as i32 % match_result.mat_size()[1];
         let py_max = y.0 as i32 / match_result.mat_size()[1];
-        println!("{:?}", Element::new(1, px_max, py_max, *y.1, threshold));
         Element::new(1, px_max, py_max, *y.1, threshold)
     }).collect();
 

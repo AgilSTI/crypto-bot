@@ -20,6 +20,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let hero_img = imgcodecs::imread("images-target/hero-icon.png", 0).expect("Couldn't find connect image");
     let treasure_hunt_img = imgcodecs::imread("images-target/treasure-hunt-icon.png", 0).expect("Couldn't find treasure hunt image");
     let green_bar_img = imgcodecs::imread("images-target/green-bar.png", 0).expect("Couldn't find green bar image");
+    let close_heroes_screen_img = imgcodecs::imread("images-target/x.png", 0).expect("Couldn't find green bar image");
 
     let display = Display::primary().expect("Couldn't find primary display.");
     let mut capturer = Capturer::new(display).expect("Couldn't begin capture.");
@@ -28,6 +29,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut check_rest = true;
     let mut mouse = Enigo::new();
     let total_heroes = 11;
+    let mut sent_to_work = 0;
+    let mut scanned_heroes = 0;
     let mut actual_screen = ScreenName::Connect;
     thread::sleep(std::time::Duration::from_secs(3));
 
@@ -59,6 +62,8 @@ fn main() -> Result<(), Box<dyn Error>> {
             &mut mouse, 
             &mut actual_screen,
             total_heroes,
+            &mut sent_to_work,
+            &mut scanned_heroes,
             screenshot.borrow(),
             target_connect_img.borrow(),
             metamask_connect_img.borrow(),
@@ -66,6 +71,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             hero_img.borrow(),
             treasure_hunt_img.borrow(),
             &green_bar_img.borrow(),
+            close_heroes_screen_img.borrow(),
         );
    }
 
