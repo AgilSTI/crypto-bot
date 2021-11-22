@@ -6,6 +6,7 @@ pub fn matching_elements(
     check_rest: &mut bool, 
     mouse: &mut Enigo,
     actual_screen: &mut ScreenName,
+    total_heroes: i32,
     screenshot: &Mat,
     connect_img: &Mat,
     metamask_no_hover_img: &Mat,
@@ -53,7 +54,7 @@ pub fn matching_elements(
             let matched_elements: Vec<&Element> = elements.iter().filter(|x| {
                 x.matching_probability > x.matching_probability_minimal
             }).collect();
-            game_page_control_flow(check_rest, mouse, actual_screen, matched_elements, &hero_element, &treasure_hunt_element, &green_bar_element);
+            game_page_control_flow(check_rest, mouse, actual_screen, total_heroes, matched_elements, &hero_element, &treasure_hunt_element, &green_bar_element);
            }
        }
      
@@ -99,9 +100,7 @@ pub fn match_multiples_elements(screenshot: &Mat, template: &Mat, threshold: f32
     for x in 0..elements.len() {
         if x < elements.len() - 1 && elements[x+1].position_y - elements[x].position_y < 5 {
             normalized_elements.push(elements[x]);
-            println!("{}", x);
         }
-        println!("{}", x);
     }
     normalized_elements
 }

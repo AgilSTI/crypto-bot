@@ -27,6 +27,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let mut check_rest = true;
     let mut mouse = Enigo::new();
+    let total_heroes = 11;
     let mut actual_screen = ScreenName::Connect;
     thread::sleep(std::time::Duration::from_secs(3));
 
@@ -57,6 +58,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             &mut check_rest, 
             &mut mouse, 
             &mut actual_screen,
+            total_heroes,
             screenshot.borrow(),
             target_connect_img.borrow(),
             metamask_connect_img.borrow(),

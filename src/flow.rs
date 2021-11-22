@@ -1,7 +1,6 @@
-use crate::{element::Element, matching::match_multiples_elements, smooth_movement::smoothly_move_to, util::ScreenName};
+use crate::{element::Element, matching::match_multiples_elements, util::ScreenName};
 use enigo::*;
-use opencv::{core::Mat, imgcodecs};
-use rayon::iter::IntoParallelRefIterator;
+use opencv::{imgcodecs};
 
 pub fn connect_page_control_flow(
     mouse: &mut Enigo,
@@ -36,13 +35,14 @@ pub fn game_page_control_flow(
     check_rest: &mut bool,
     mouse: &mut Enigo,
     screen: &mut ScreenName,
+    total_heroes: i32,
     matched_elements: Vec<&Element>,
     hero_element: &Element,
     treasure_hunt_element: &Element,
     green_bar_element: &Element
 ) {
 
-    if !matched_elements.contains(&hero_element) && matched_elements.contains(&treasure_hunt_element) {
+    if matched_elements.contains(&hero_element) && matched_elements.contains(&treasure_hunt_element) {
         // inside game menu
         if *check_rest {
         hero_element.go_to_location_and_click(mouse, 32, 32, 1);
@@ -52,16 +52,37 @@ pub fn game_page_control_flow(
 
     }  else if matched_elements.contains(&green_bar_element) {
         // inside hero screen
-        let screenshot = imgcodecs::imread("tmp/output.png", 0).expect("Couldn't find connect image");
         let green_bar_img = imgcodecs::imread("images-target/green-bar.png", 0).expect("Couldn't find green bar image");
         let go_work_img = imgcodecs::imread("images-target/go-work.png", 0).expect("Couldn't find green bar image");
-        let elements = match_multiples_elements(&screenshot, &green_bar_img, 0.99);
-        elements.iter().for_each( |x | {
-            x.go_to_location(mouse, 1);
-        });
+       
 
-        println!("{}", elements.len());
-        std::thread::sleep(std::time::Duration::from_secs(10));
+        for x in 0..total_heroes / 5 {
+            println!("execução do bloco na tela dos heroes");
+            let screenshot = imgcodecs::imread("tmp/output.png", 0).expect("Couldn't find connect image");
+            let green_bar_elements = match_multiples_elements(&screenshot, &green_bar_img, 0.99);
+            let go_work_elements = match_multiples_elements(&screenshot, &go_work_img, 0.99);
+            green_bar_elements.iter().for_each(|x| {
+                go_work_elements.iter().for_each(|y| {
+                    if y.position_y - x.position_y == -14 {
+                        y.go_to_location(mouse, 20, 20, 1);
+                    }
+                })
+             });
+     
+     
+             let last_green_bar = green_bar_elements.last();
+     
+             match last_green_bar {
+                 Some(y) => {
+                     y.slide_down(mouse, 40);
+                 },
+                 _ => {
+     
+                 }
+             }
+        }
+
+        std::thread::sleep(std::time::Duration::from_secs(4));
 
     } else {
     *screen = ScreenName::Connect;
