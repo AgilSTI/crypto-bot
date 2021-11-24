@@ -60,7 +60,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         let new_buff=  buffer.to_vec();
         let bgra_image = RgbaImage::from_vec(w as u32, h as u32, new_buff).unwrap();
         let normalized_rgba_image = convert_bgra_to_rgba(bgra_image);
-        normalized_rgba_image.save_with_format("tmp/output.png", image::ImageFormat::Png).unwrap();
+        normalized_rgba_image.save_with_format("tmp/output.png", image::ImageFormat::Png).expect("couldn't find screenshot");
         let screenshot = imgcodecs::imread("tmp/output.png", 0).expect("Couldn't find connect image");
         
         matching_elements(
