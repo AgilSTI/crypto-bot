@@ -13,8 +13,6 @@ fn main() -> Result<(), Box<dyn Error>> {
     let arguments: Vec<String> = std::env::args().collect();
     let config = Config::from_args(arguments);
 
-    println!("{:?}", config);
-
     //importing target element assets and covert to OpenCV elements
     let target_connect_img = imgcodecs::imread("images-target/connect.png", 0).expect("Couldn't find connect image");
     let metamask_connect_img = imgcodecs::imread("images-target/select-wallet-1-no-hover.png", 0).expect("Couldn't find connect image");
@@ -37,18 +35,19 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut sent_to_work = 0;
     let mut scanned_heroes = 0;
     let mut actual_screen = ScreenName::Connect;
+    println!("the bot will start looking for game elements in {} seconds. Please remember to be logged into metamask.", config.start_delay);
     thread::sleep(std::time::Duration::from_secs(config.start_delay));
 
     let one_second = Duration::new(1, 0);
     let one_frame = one_second / 60;
     loop {
+        println!("Looking for game elements.");
         let buffer = match capturer.frame() {
             Ok(buffer) => {
                 buffer
             },
             Err(error) => {
                 if error.kind() == WouldBlock {
-                    // Keep spinning.
                     thread::sleep(one_frame);
                     continue;
                 } else {

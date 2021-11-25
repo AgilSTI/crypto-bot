@@ -45,7 +45,6 @@ pub fn matching_elements(
            connect_page_control_flow(mouse, actual_screen, matched_elements, &connect_element, &metamask_element, &metamask_blue_sign_element, config)
            },
            _ => {
-            println!("********************");
             let hero_element =  match_element(screenshot, hero_img, 0.99);
             let treasure_hunt_element =  match_element(screenshot, treasure_hunt_img, 0.99);
             let green_bar_element = match_element(screenshot, green_bar_img, 0.99);
