@@ -48,10 +48,27 @@ pub fn game_page_control_flow(
     go_back_arrow_element: &Element,
     common_text_element: &Element,
     new_map_element: &Element,
+    ok_element: &Element,
     config: &Config,
 ) {
 
-    if matched_elements.contains(&hero_element) && matched_elements.contains(&treasure_hunt_element) {
+    if matched_elements.contains(&ok_element) {
+
+        println!("Accepting the error and refresh the page");
+        ok_element.go_to_location_and_click(mouse, 100, 32, 1);
+        std::thread::sleep(std::time::Duration::from_secs(2));
+        mouse.key_click(Key::F5);
+        println!("waiting for 120 seconds for page reload");
+        std::thread::sleep(std::time::Duration::from_secs(120));
+
+    } else if matched_elements.contains(&new_map_element){
+        *check_rest = true;
+        println!("Confirming new map");
+        new_map_element.go_to_location_and_click(mouse, 100, 32, 1);
+        println!("waiting for 60 seconds to load a new map");
+        std::thread::sleep(std::time::Duration::from_secs(60));
+
+    } else if matched_elements.contains(&hero_element) && matched_elements.contains(&treasure_hunt_element) {
         // inside game menu
         if *check_rest {
         println!("Checking for fresh heroes.");
@@ -62,9 +79,9 @@ pub fn game_page_control_flow(
         println!("Opening treasure hunt screen...");
         treasure_hunt_element.go_to_location_and_click(mouse, 100, 100, 1);
         std::thread::sleep(std::time::Duration::from_secs(config.treasure_hunt_first_action_delay));
-     }
-
-    }  else if matched_elements.contains(&common_text_element) && *check_rest {
+     } 
+    
+    } else if matched_elements.contains(&common_text_element) && *check_rest {
         // inside hero screen
         
             let green_bar_img = imgcodecs::imread("images-target/green-bar.png", 0).expect("Couldn't find green bar image");

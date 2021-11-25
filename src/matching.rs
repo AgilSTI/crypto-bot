@@ -21,6 +21,7 @@ pub fn matching_elements(
     go_back_arrow_img: &Mat,
     common_text_img: &Mat,
     new_map_img: &Mat,
+    ok_img: &Mat
     ) {
 
        match actual_screen {
@@ -52,6 +53,7 @@ pub fn matching_elements(
             let go_back_arrow_element = match_element(screenshot, go_back_arrow_img, 0.99);
             let common_text_element = match_element(screenshot, common_text_img, 0.99);
             let new_map_element =  match_element(screenshot, new_map_img, 0.99);
+            let ok_element = match_element(screenshot, ok_img, 0.99);
             let elements = vec![
                 hero_element,
                 treasure_hunt_element,
@@ -60,6 +62,7 @@ pub fn matching_elements(
                 go_back_arrow_element,
                 common_text_element,
                 new_map_element,
+                ok_element
             ];
             let matched_elements: Vec<&Element> = elements.iter().filter(|x| {
                 x.matching_probability > x.matching_probability_minimal
@@ -79,6 +82,7 @@ pub fn matching_elements(
                 &go_back_arrow_element,
                 &common_text_element,
                 &new_map_element,
+                &ok_element,
                 config
             );
            }
