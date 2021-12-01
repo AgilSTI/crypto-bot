@@ -58,8 +58,8 @@ pub fn game_page_control_flow(
         ok_element.go_to_location_and_click(mouse, 100, 32, 1);
         std::thread::sleep(std::time::Duration::from_secs(2));
         mouse.key_click(Key::F5);
-        println!("waiting for 120 seconds for page reload");
-        std::thread::sleep(std::time::Duration::from_secs(120));
+        println!("waiting for 60 seconds for page reload");
+        std::thread::sleep(std::time::Duration::from_secs(60));
 
     } else if matched_elements.contains(&new_map_element){
         *check_rest = true;
@@ -103,12 +103,14 @@ pub fn game_page_control_flow(
                  });
     
                  if able_to_work_heroes.len() > 1 {
+                    *scann_attempt = 0;
                     println!("Sending heroes to work...");
                     able_to_work_heroes[0].go_to_location_and_click(mouse, 20, 20, 1);
                     println!("Hero sent to work, waiting for {} seconds to sent the next one", config.after_sent_to_work_delay);
                     std::thread::sleep(std::time::Duration::from_secs(config.after_sent_to_work_delay));
-                 } else if able_to_work_heroes.len() == 1{
+                 } else if able_to_work_heroes.len() == 1 {
                     println!("Sending heroes to work...");
+                    *scann_attempt = 0;
                     able_to_work_heroes[0].go_to_location_and_click(mouse, 20, 20, 1);
                     println!("Hero sent to work, waiting for {} seconds for scroll up and find next one", config.after_sent_to_work_delay);
                     std::thread::sleep(std::time::Duration::from_secs(config.after_sent_to_work_delay));
@@ -119,6 +121,7 @@ pub fn game_page_control_flow(
                     let last_common = common_text_element.last().unwrap();
                     last_common.slide_down(mouse, 140);
                     *scann_attempt += 1;
+
                  } else {
                     println!("Closing Heroes page and returning to the treasure hunt screen");
                     close_heroes_screen_element.go_to_location_and_click(mouse, 0, 0, 1);
@@ -131,6 +134,8 @@ pub fn game_page_control_flow(
         println!("Watching the heroes work. Waiting for {} seconds to check the heroes who are rested.", config.check_for_heroes_able_to_work_delay);
         std::thread::sleep(std::time::Duration::from_secs(config.check_for_heroes_able_to_work_delay));
         go_back_arrow_element.go_to_location_and_click(mouse, 32, 23, 1);
+        std::thread::sleep(std::time::Duration::from_secs(10));
+
     } else {
     *screen = ScreenName::Connect;
   }

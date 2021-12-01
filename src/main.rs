@@ -43,6 +43,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let one_second = Duration::new(1, 0);
     let one_frame = one_second / 60;
     loop {
+        std::thread::sleep(std::time::Duration::from_secs(3));
         println!("Looking for game elements.");
         let buffer = match capturer.frame() {
             Ok(buffer) => {
