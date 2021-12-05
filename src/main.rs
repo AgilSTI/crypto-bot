@@ -7,11 +7,20 @@ use std::time::Duration;
 use std::io::ErrorKind::WouldBlock;
 use opencv::{imgcodecs};
 
-
-fn main() -> Result<(), Box<dyn Error>> {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error>> {
 
     let arguments: Vec<String> = std::env::args().collect();
-    let config = Config::from_args(arguments);
+    let config = &Config::from_args(arguments);
+
+    println!("cheking credentials");
+    let is_token_valid = check_token(String::from(&config.token)).await;
+
+    if !is_token_valid {
+        println!("invalid or expired credentials, try log in again in few seconds");
+        return Ok(())
+    }
+    
 
     //importing target element assets and covert to OpenCV elements
     let target_connect_img = imgcodecs::imread("images-target/connect.png", 0).expect("Couldn't find connect image");
@@ -23,8 +32,10 @@ fn main() -> Result<(), Box<dyn Error>> {
     let close_heroes_screen_img = imgcodecs::imread("images-target/x.png", 0).expect("Couldn't  image");
     let go_back_arrow_img = imgcodecs::imread("images-target/go-back-arrow.png", 0).expect("Couldn't  image");
     let common_img = imgcodecs::imread("images-target/common-text.png", 0).expect("Couldn't image");
+    let home_img = imgcodecs::imread("images-target/home.png", 0).expect("Couldn't image");
     let new_map_img =  imgcodecs::imread("images-target/new-map.png", 0).expect("Couldn't image");
     let ok_img =  imgcodecs::imread("images-target/ok.png", 0).expect("Couldn't image");
+    let captcha_ask_robot =  imgcodecs::imread("images-target/are_you_robot.png", 0).expect("Couldn't image");
 
 
     let display = Display::primary().expect("Couldn't find primary display.");
@@ -37,7 +48,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut sent_to_work = 0;
     let mut scanned_heroes = 0;
     let mut actual_screen = ScreenName::Connect;
-    println!("the bot will start looking for game elements in {} seconds. Please remember to be logged into metamask.", config.start_delay);
+    println!("the bot will start looking for game elements in {} seconds. Please remeber to unlock metamask before.", config.start_delay);
     thread::sleep(std::time::Duration::from_secs(config.start_delay));
 
     let one_second = Duration::new(1, 0);
@@ -72,7 +83,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             total_heroes,
             &mut sent_to_work,
             &mut scanned_heroes,
-            config.borrow(),
+            config.clone().borrow(),
             screenshot.borrow(),
             target_connect_img.borrow(),
             metamask_connect_img.borrow(),
@@ -83,10 +94,10 @@ fn main() -> Result<(), Box<dyn Error>> {
             close_heroes_screen_img.borrow(),
             go_back_arrow_img.borrow(),
             common_img.borrow(),
+            home_img.borrow(),
             new_map_img.borrow(),
             &ok_img.borrow(),
+            captcha_ask_robot.borrow(),
         );
    }
-
-   Ok(())
 }

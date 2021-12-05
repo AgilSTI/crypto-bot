@@ -1,4 +1,4 @@
-use crate::{config::Config, element::Element, matching::match_multiples_elements, util::ScreenName};
+use crate::{config::Config, element::Element, matching::*, util::{ScreenName, filter_image_by_min_max_rgba_color, find_captcha_target, find_best_match_by_colors}};
 use enigo::*;
 use opencv::{imgcodecs};
 
@@ -47,13 +47,51 @@ pub fn game_page_control_flow(
     close_heroes_screen_element: &Element,
     go_back_arrow_element: &Element,
     common_text_element: &Element,
+    home_element: &Element,
     new_map_element: &Element,
     ok_element: &Element,
+    captcha_ask_robot_element: &Element,
     config: &Config,
 ) {
 
-    if matched_elements.contains(&ok_element) {
+    if matched_elements.contains(&captcha_ask_robot_element) {
+        
+        let screenshot = opencv::imgcodecs::imread("tmp/output.png", 0).unwrap();
+        let mut original_screenshot = image::open("tmp/output.png").expect("Couldn't find image");
 
+        let captcha_slider_start_img = opencv::imgcodecs::imread("images-target/captcha_slider_yellow.png", 0).unwrap();
+        let captcha_slider_end_img = opencv::imgcodecs::imread("images-target/captcha_slider_end.png", 0).unwrap();
+        let captcha_box_start_img = opencv::imgcodecs::imread("images-target/captcha_box_start.png", 0).unwrap();
+
+        let captcha_slider_start_element = match_element(&screenshot, &captcha_slider_start_img, 0.99);
+        let captcha_slider_end_element = match_element(&screenshot, &captcha_slider_end_img, 0.99);
+        let captcha_start_box_with_padding_element = match_element(&screenshot, &captcha_box_start_img, 0.99);
+
+        let target = find_best_match_by_colors(&mut original_screenshot,
+                    captcha_start_box_with_padding_element.position_x + 40 + 26,
+            captcha_slider_start_element.position_x + 335,
+            captcha_slider_start_element.position_y - 230,
+            captcha_slider_start_element.position_y - 30
+        );
+
+        // calculating piece movement %
+        let piece_movement_clamp = 304;
+        let ecren_dist_from_pice_to_target = target.position_x as f32 - (captcha_start_box_with_padding_element.position_x as f32 + 36 as f32);
+        let movement_percentage = (ecren_dist_from_pice_to_target * 100.0) / piece_movement_clamp as f32;
+
+        // calculating slide movement based on piece movement %
+        let slider_movement_clamp = (captcha_slider_end_element.position_x as f32 - 10.0) - (captcha_slider_start_element.position_x as f32 + 3.0);
+        let slider_movement_value = slider_movement_clamp * movement_percentage / 100.0;
+
+
+        captcha_slider_start_element.go_to_location(mouse,10,12, 1);
+        mouse.mouse_down(enigo::MouseButton::Left);
+        captcha_slider_start_element.go_to_location(mouse, slider_movement_value as i32 + 17, 12, 1);
+        std::thread::sleep(std::time::Duration::from_secs(1));
+        mouse.mouse_up(enigo::MouseButton::Left);
+        std::thread::sleep(std::time::Duration::from_secs(10));
+
+    } else if matched_elements.contains(&ok_element) {
         println!("Accepting the error and refresh the page");
         ok_element.go_to_location_and_click(mouse, 100, 32, 1);
         std::thread::sleep(std::time::Duration::from_secs(2));
@@ -81,9 +119,8 @@ pub fn game_page_control_flow(
         std::thread::sleep(std::time::Duration::from_secs(config.treasure_hunt_first_action_delay));
      } 
     
-    } else if matched_elements.contains(&common_text_element) && *check_rest {
+    } else if matched_elements.contains(&common_text_element) &&  matched_elements.contains(&home_element) && *check_rest {
         // inside hero screen
-        
             let green_bar_img = imgcodecs::imread("images-target/green-bar.png", 0).expect("Couldn't find green bar image");
             let go_work_img = imgcodecs::imread("images-target/go-work.png", 0).expect("Couldn't find green bar image");
             let common_img = imgcodecs::imread("images-target/common-text.png", 0).expect("Couldn't find connect image");
@@ -96,7 +133,7 @@ pub fn game_page_control_flow(
     
             green_bar_elements.iter().for_each(|x| {
                 go_work_elements.iter().for_each(|y| {
-                    if y.position_y - x.position_y == -14 {
+                    if y.position_y - x.position_y == - 14 {
                             able_to_work_heroes.push(*y);
                         }
                     })

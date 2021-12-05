@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Config {
     pub start_delay: u64,
     pub heroes_page_first_action_delay: u64,
@@ -9,6 +9,8 @@ pub struct Config {
     pub after_click_metamask_sign_blue_btn_delay: u64,
     pub after_click_metamask_connect_delay: u64,
     pub after_click_connect_orange_btn_delay: u64,
+    pub wait_for_page_refresh_delay: u64,
+    pub token: String
 }
 
 impl Config {
@@ -23,6 +25,8 @@ impl Config {
             after_click_metamask_sign_blue_btn_delay: convert_string_to_u64(args[7].to_owned()),
             after_click_metamask_connect_delay:  convert_string_to_u64(args[8].to_owned()),
             after_click_connect_orange_btn_delay: convert_string_to_u64(args[9].to_owned()),
+            wait_for_page_refresh_delay: convert_string_to_u64(args[10].to_owned()),
+            token: args[11].to_owned()
         }
     }
 }
