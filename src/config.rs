@@ -10,6 +10,7 @@ pub struct Config {
     pub after_click_metamask_connect_delay: u64,
     pub after_click_connect_orange_btn_delay: u64,
     pub wait_for_page_refresh_delay: u64,
+    pub heroes_page_slide_attempt: u64,
     pub token: String
 }
 
@@ -26,7 +27,8 @@ impl Config {
             after_click_metamask_connect_delay:  convert_string_to_u64(args[8].to_owned()),
             after_click_connect_orange_btn_delay: convert_string_to_u64(args[9].to_owned()),
             wait_for_page_refresh_delay: convert_string_to_u64(args[10].to_owned()),
-            token: args[11].to_owned()
+            heroes_page_slide_attempt: convert_string_to_u64(args[11].to_owned()),
+            token: args[12].to_owned()
         }
     }
 }

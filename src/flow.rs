@@ -85,11 +85,12 @@ pub fn game_page_control_flow(
 
 
         captcha_slider_start_element.go_to_location(mouse,10,12, 1);
+        std::thread::sleep(std::time::Duration::from_secs(1));
         mouse.mouse_down(enigo::MouseButton::Left);
+        std::thread::sleep(std::time::Duration::from_secs(2));
         captcha_slider_start_element.go_to_location(mouse, slider_movement_value as i32 + 17, 12, 1);
         std::thread::sleep(std::time::Duration::from_secs(1));
         mouse.mouse_up(enigo::MouseButton::Left);
-        std::thread::sleep(std::time::Duration::from_secs(10));
 
     } else if matched_elements.contains(&ok_element) {
         println!("Accepting the error and refresh the page");
@@ -130,14 +131,15 @@ pub fn game_page_control_flow(
             let green_bar_elements = match_multiples_elements(&screenshot, &green_bar_img, 0.99);
             let go_work_elements = match_multiples_elements(&screenshot, &go_work_img, 0.99);
             let common_text_element = match_multiples_elements(&screenshot, &common_img, 0.99);
-    
-            green_bar_elements.iter().for_each(|x| {
-                go_work_elements.iter().for_each(|y| {
-                    if y.position_y - x.position_y == - 14 {
-                            able_to_work_heroes.push(*y);
-                        }
-                    })
-                 });
+
+                green_bar_elements.iter().for_each(|x| {
+                    go_work_elements.iter().for_each(|y| {
+                        if y.position_y - x.position_y == - 14 {
+                                able_to_work_heroes.push(*y);
+                            }
+                        })
+                     });
+
     
                  if able_to_work_heroes.len() > 1 {
                     *scann_attempt = 0;
@@ -151,14 +153,13 @@ pub fn game_page_control_flow(
                     able_to_work_heroes[0].go_to_location_and_click(mouse, 20, 20, 1);
                     println!("Hero sent to work, waiting for {} seconds for scroll up and find next one", config.after_sent_to_work_delay);
                     std::thread::sleep(std::time::Duration::from_secs(config.after_sent_to_work_delay));
-                    able_to_work_heroes[0].slide_down(mouse, 100);
+                    able_to_work_heroes[0].slide_down(mouse, 30);
 
                  } else if *scann_attempt < 3 {
                     println!("Scrolling up to find next hero able to work: attempt {}", *scann_attempt);
                     let last_common = common_text_element.last().unwrap();
-                    last_common.slide_down(mouse, 140);
+                    last_common.slide_down(mouse, 30);
                     *scann_attempt += 1;
-
                  } else {
                     println!("Closing Heroes page and returning to the treasure hunt screen");
                     close_heroes_screen_element.go_to_location_and_click(mouse, 0, 0, 1);

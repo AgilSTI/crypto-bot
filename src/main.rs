@@ -1,7 +1,7 @@
 use image::{self, RgbaImage};
 use enigo::{self, Enigo};
 use scrap::{self, Capturer, Display};
-use template::{config::Config, matching::{matching_elements}, util::{*}};
+use bcbot::{config::Config, matching::{matching_elements}, util::{*}};
 use std::{borrow::Borrow, error::Error, thread::{self}};
 use std::time::Duration;
 use std::io::ErrorKind::WouldBlock;
@@ -12,7 +12,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let arguments: Vec<String> = std::env::args().collect();
     let config = &Config::from_args(arguments);
-
     println!("cheking credentials");
     let is_token_valid = check_token(String::from(&config.token)).await;
 
@@ -46,9 +45,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let mut mouse = Enigo::new();
     let total_heroes = 11;
     let mut sent_to_work = 0;
-    let mut scanned_heroes = 0;
+    let mut scan_attempt = 1;
     let mut actual_screen = ScreenName::Connect;
     println!("the bot will start looking for game elements in {} seconds. Please remeber to unlock metamask before.", config.start_delay);
+    println!("wait after connect {:?}", config.after_click_connect_orange_btn_delay);
     thread::sleep(std::time::Duration::from_secs(config.start_delay));
 
     let one_second = Duration::new(1, 0);
@@ -82,7 +82,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             &mut actual_screen,
             total_heroes,
             &mut sent_to_work,
-            &mut scanned_heroes,
+            &mut scan_attempt,
             config.clone().borrow(),
             screenshot.borrow(),
             target_connect_img.borrow(),

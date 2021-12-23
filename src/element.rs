@@ -37,9 +37,9 @@ impl Element {
     pub fn slide_down(&self, mouse: &mut Enigo, y_movement: i32) {
         mouse.mouse_move_to(self.position_x, self.position_y);
         mouse.mouse_down(enigo::MouseButton::Left);
-        for x in 0..y_movement {
+        for y in 0..y_movement {
             std::thread::sleep(std::time::Duration::from_millis(50));
-            mouse.mouse_move_relative(0, -x);
+            mouse.mouse_move_relative(0, -y);
         }
 
         mouse.mouse_up(enigo::MouseButton::Left);

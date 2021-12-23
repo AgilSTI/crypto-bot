@@ -133,14 +133,14 @@ pub fn match_multiples_elements(screenshot: &Mat, template: &Mat, threshold: f32
         Element::new(1, px_max, py_max, *y.1, threshold)
     }).collect();
 
-    let mut normalized_elements: Vec<Element> = Vec::new();
+    // let mut normalized_elements: Vec<Element> = Vec::new();
 
-    for x in 0..elements.len() {
-        if x < elements.len() - 1 && elements[x+1].position_y - elements[x].position_y < 5 {
-            normalized_elements.push(elements[x]);
-        }
-    }
-    normalized_elements
+    // for x in 0..elements.len() {
+    //     if x < elements.len() - 1 && elements[x+1].position_y - elements[x].position_y < 5 {
+    //         normalized_elements.push(elements[x]);
+    //     }
+    // }
+    elements
 }
 
 pub fn filter_matched_elements_by_region(elements: Vec<Element>, min_x: i32, max_x: i32, min_y: i32, max_y: i32) -> Element {
